@@ -53,23 +53,4 @@ export function SiteHeader() {
   );
 }
 
-export function SiteFooter() {
-  return (
-    <footer className="mt-20 border-t border-neutral-200/80 py-10 text-xs text-neutral-500 dark:border-neutral-800/80">
-      <div className="mx-auto max-w-7xl space-y-2 px-5">
-        <p>
-          Data drawn from World Bank, REST Countries, Transparency International,
-          UNODC, World Happiness Report, Reporters Without Borders, and UNDP.
-          See{" "}
-          <Link href="/about" className="underline hover:text-neutral-700 dark:hover:text-neutral-300">
-            About
-          </Link>{" "}
-          for source dates and methodology.
-        </p>
-        <p className="text-neutral-400 dark:text-neutral-600">
-          Indicators are imperfect proxies. Read rankings critically.
-        </p>
-      </div>
-    </footer>
-  );
-}
+

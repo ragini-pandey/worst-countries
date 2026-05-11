@@ -80,7 +80,7 @@ export function HomeExplorer({ rankings, defaultMetricId }: Props) {
   const categories = Object.keys(grouped).sort();
 
   return (
-    <div className="flex h-[calc(100vh-3.75rem)] flex-col">
+    <div className="flex h-full flex-col">
       {/* Top bar with dropdown — full width, compact */}
       <div className="relative z-40 flex flex-wrap items-center gap-3 border-b border-neutral-200 bg-white/70 px-5 py-3 backdrop-blur dark:border-neutral-800 dark:bg-neutral-950/70">
         <div

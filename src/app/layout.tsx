@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { SiteHeader, SiteFooter } from "@/components/SiteChrome";
+import { SiteHeader } from "@/components/SiteChrome";
 
 export const metadata: Metadata = {
   title: {
@@ -23,10 +23,9 @@ export default function RootLayout({
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>
-      <body className="min-h-screen bg-white text-neutral-900 antialiased flex flex-col dark:bg-neutral-950 dark:text-neutral-100">
+      <body className="h-screen overflow-hidden bg-white text-neutral-900 antialiased flex flex-col dark:bg-neutral-950 dark:text-neutral-100">
         <SiteHeader />
-        <main className="flex-1 w-full">{children}</main>
-        <SiteFooter />
+        <main className="flex-1 w-full overflow-y-auto">{children}</main>
       </body>
     </html>
   );
