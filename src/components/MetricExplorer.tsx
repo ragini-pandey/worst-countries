@@ -49,17 +49,25 @@ export function MetricExplorer({ metric, rows }: Props) {
     zoom: 1,
   });
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [mapScale, setMapScale] = useState(155);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Responsive projection scale — smaller on narrow screens so the full world fits
+  // On mobile, start zoomed in so countries are legible
+  const defaultPosition = useCallback(
+    () =>
+      typeof window !== "undefined" && window.innerWidth < 768
+        ? { coordinates: [15, 15] as [number, number], zoom: 1.8 }
+        : { coordinates: [10, 10] as [number, number], zoom: 1 },
+    []
+  );
+
   useEffect(() => {
-    function update() {
-      setMapScale(window.innerWidth < 768 ? 118 : 155);
+    setPosition(defaultPosition());
+    function onResize() {
+      setPosition(defaultPosition());
     }
-    update();
-    window.addEventListener("resize", update);
-    return () => window.removeEventListener("resize", update);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const { color, byIso, range } = useMemo(() => {
@@ -88,8 +96,8 @@ export function MetricExplorer({ metric, rows }: Props) {
     setPinned(null);
     setQuery("");
     setMobileTab("map");
-    setPosition({ coordinates: [10, 10], zoom: 1 });
-  }, [metric.id]);
+    setPosition(defaultPosition());
+  }, [metric.id, defaultPosition]);
 
   // Track fullscreen state
   useEffect(() => {
@@ -114,8 +122,8 @@ export function MetricExplorer({ metric, rows }: Props) {
   }, []);
 
   const resetView = useCallback(() => {
-    setPosition({ coordinates: [10, 10], zoom: 1 });
-  }, []);
+    setPosition(defaultPosition());
+  }, [defaultPosition]);
 
   const toggleFullscreen = useCallback(async () => {
     if (!containerRef.current) return;
@@ -166,7 +174,7 @@ export function MetricExplorer({ metric, rows }: Props) {
         } ${mobileTab === "list" ? "hidden md:block" : "block"}`}
       >
         <ComposableMap
-          projectionConfig={{ scale: mapScale }}
+          projectionConfig={{ scale: 155 }}
           width={1280}
           height={620}
           style={{ width: "100%", height: "100%" }}
