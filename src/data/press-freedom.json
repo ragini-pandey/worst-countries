@@ -1,0 +1,514 @@
+[
+  {
+    "iso3": "ERI",
+    "value": 85.16
+  },
+  {
+    "iso3": "PRK",
+    "value": 83.31
+  },
+  {
+    "iso3": "SYR",
+    "value": 81.49
+  },
+  {
+    "iso3": "IRN",
+    "value": 76.54
+  },
+  {
+    "iso3": "TKM",
+    "value": 76.06
+  },
+  {
+    "iso3": "CHN",
+    "value": 75.96
+  },
+  {
+    "iso3": "VNM",
+    "value": 74.69
+  },
+  {
+    "iso3": "MMR",
+    "value": 73.68
+  },
+  {
+    "iso3": "BLR",
+    "value": 71.86
+  },
+  {
+    "iso3": "AFG",
+    "value": 71.62
+  },
+  {
+    "iso3": "AZE",
+    "value": 68.91
+  },
+  {
+    "iso3": "SAU",
+    "value": 67.77
+  },
+  {
+    "iso3": "BHR",
+    "value": 67.55
+  },
+  {
+    "iso3": "CUB",
+    "value": 67.18
+  },
+  {
+    "iso3": "LAO",
+    "value": 65.34
+  },
+  {
+    "iso3": "YEM",
+    "value": 65.21
+  },
+  {
+    "iso3": "EGY",
+    "value": 64.5
+  },
+  {
+    "iso3": "OMN",
+    "value": 63.81
+  },
+  {
+    "iso3": "DJI",
+    "value": 63.52
+  },
+  {
+    "iso3": "PSE",
+    "value": 62.85
+  },
+  {
+    "iso3": "RUS",
+    "value": 61.79
+  },
+  {
+    "iso3": "IRQ",
+    "value": 62.62
+  },
+  {
+    "iso3": "PAK",
+    "value": 59.95
+  },
+  {
+    "iso3": "BGD",
+    "value": 58.63
+  },
+  {
+    "iso3": "MAR",
+    "value": 58.27
+  },
+  {
+    "iso3": "TUR",
+    "value": 58.15
+  },
+  {
+    "iso3": "DZA",
+    "value": 57.85
+  },
+  {
+    "iso3": "VEN",
+    "value": 56.55
+  },
+  {
+    "iso3": "HND",
+    "value": 54.78
+  },
+  {
+    "iso3": "COL",
+    "value": 53.96
+  },
+  {
+    "iso3": "NIC",
+    "value": 52.88
+  },
+  {
+    "iso3": "MEX",
+    "value": 52.65
+  },
+  {
+    "iso3": "IND",
+    "value": 52.78
+  },
+  {
+    "iso3": "PHL",
+    "value": 51.82
+  },
+  {
+    "iso3": "ETH",
+    "value": 54.31
+  },
+  {
+    "iso3": "SOM",
+    "value": 54.79
+  },
+  {
+    "iso3": "SDN",
+    "value": 56.49
+  },
+  {
+    "iso3": "SSD",
+    "value": 54.96
+  },
+  {
+    "iso3": "NGA",
+    "value": 54.51
+  },
+  {
+    "iso3": "BFA",
+    "value": 56.76
+  },
+  {
+    "iso3": "MLI",
+    "value": 50.93
+  },
+  {
+    "iso3": "COD",
+    "value": 54.97
+  },
+  {
+    "iso3": "CMR",
+    "value": 52.82
+  },
+  {
+    "iso3": "CAF",
+    "value": 50
+  },
+  {
+    "iso3": "COG",
+    "value": 51.42
+  },
+  {
+    "iso3": "BDI",
+    "value": 51.01
+  },
+  {
+    "iso3": "RWA",
+    "value": 52.45
+  },
+  {
+    "iso3": "GNQ",
+    "value": 54.53
+  },
+  {
+    "iso3": "TCD",
+    "value": 50.74
+  },
+  {
+    "iso3": "NER",
+    "value": 48.43
+  },
+  {
+    "iso3": "ZWE",
+    "value": 50.46
+  },
+  {
+    "iso3": "UGA",
+    "value": 50.43
+  },
+  {
+    "iso3": "MOZ",
+    "value": 50.66
+  },
+  {
+    "iso3": "AGO",
+    "value": 49.05
+  },
+  {
+    "iso3": "KAZ",
+    "value": 49.85
+  },
+  {
+    "iso3": "UZB",
+    "value": 54.69
+  },
+  {
+    "iso3": "KGZ",
+    "value": 48.5
+  },
+  {
+    "iso3": "TJK",
+    "value": 48.97
+  },
+  {
+    "iso3": "LBY",
+    "value": 53.57
+  },
+  {
+    "iso3": "TUN",
+    "value": 47.55
+  },
+  {
+    "iso3": "JOR",
+    "value": 48.21
+  },
+  {
+    "iso3": "LBN",
+    "value": 42.36
+  },
+  {
+    "iso3": "PRY",
+    "value": 40.93
+  },
+  {
+    "iso3": "GTM",
+    "value": 42.95
+  },
+  {
+    "iso3": "SLV",
+    "value": 42.94
+  },
+  {
+    "iso3": "BRA",
+    "value": 42.55
+  },
+  {
+    "iso3": "ECU",
+    "value": 40.66
+  },
+  {
+    "iso3": "PER",
+    "value": 42.69
+  },
+  {
+    "iso3": "BOL",
+    "value": 42.4
+  },
+  {
+    "iso3": "HKG",
+    "value": 50.78
+  },
+  {
+    "iso3": "MYS",
+    "value": 42.07
+  },
+  {
+    "iso3": "SGP",
+    "value": 47.29
+  },
+  {
+    "iso3": "THA",
+    "value": 42.5
+  },
+  {
+    "iso3": "IDN",
+    "value": 40.94
+  },
+  {
+    "iso3": "LKA",
+    "value": 42.27
+  },
+  {
+    "iso3": "NPL",
+    "value": 36.59
+  },
+  {
+    "iso3": "BTN",
+    "value": 34.62
+  },
+  {
+    "iso3": "MDV",
+    "value": 47.02
+  },
+  {
+    "iso3": "MNG",
+    "value": 33.6
+  },
+  {
+    "iso3": "GEO",
+    "value": 29.71
+  },
+  {
+    "iso3": "ARM",
+    "value": 31.47
+  },
+  {
+    "iso3": "UKR",
+    "value": 31.34
+  },
+  {
+    "iso3": "MDA",
+    "value": 29.93
+  },
+  {
+    "iso3": "SRB",
+    "value": 33.86
+  },
+  {
+    "iso3": "BIH",
+    "value": 36.95
+  },
+  {
+    "iso3": "MNE",
+    "value": 31.4
+  },
+  {
+    "iso3": "MKD",
+    "value": 35.31
+  },
+  {
+    "iso3": "ALB",
+    "value": 30.91
+  },
+  {
+    "iso3": "GRC",
+    "value": 28.18
+  },
+  {
+    "iso3": "BGR",
+    "value": 29.21
+  },
+  {
+    "iso3": "ROU",
+    "value": 24.63
+  },
+  {
+    "iso3": "HUN",
+    "value": 31.02
+  },
+  {
+    "iso3": "POL",
+    "value": 27.4
+  },
+  {
+    "iso3": "CZE",
+    "value": 17.78
+  },
+  {
+    "iso3": "SVK",
+    "value": 24.65
+  },
+  {
+    "iso3": "SVN",
+    "value": 17.69
+  },
+  {
+    "iso3": "HRV",
+    "value": 29.5
+  },
+  {
+    "iso3": "ITA",
+    "value": 21.6
+  },
+  {
+    "iso3": "ESP",
+    "value": 18.93
+  },
+  {
+    "iso3": "PRT",
+    "value": 13.43
+  },
+  {
+    "iso3": "FRA",
+    "value": 21.87
+  },
+  {
+    "iso3": "DEU",
+    "value": 11.32
+  },
+  {
+    "iso3": "AUT",
+    "value": 15.11
+  },
+  {
+    "iso3": "BEL",
+    "value": 11.69
+  },
+  {
+    "iso3": "NLD",
+    "value": 11
+  },
+  {
+    "iso3": "GBR",
+    "value": 24.48
+  },
+  {
+    "iso3": "IRL",
+    "value": 12.29
+  },
+  {
+    "iso3": "DNK",
+    "value": 7.6
+  },
+  {
+    "iso3": "NOR",
+    "value": 7.9
+  },
+  {
+    "iso3": "SWE",
+    "value": 8.31
+  },
+  {
+    "iso3": "FIN",
+    "value": 11.61
+  },
+  {
+    "iso3": "ISL",
+    "value": 7.55
+  },
+  {
+    "iso3": "CHE",
+    "value": 11.65
+  },
+  {
+    "iso3": "USA",
+    "value": 34.4
+  },
+  {
+    "iso3": "CAN",
+    "value": 15
+  },
+  {
+    "iso3": "AUS",
+    "value": 21.27
+  },
+  {
+    "iso3": "NZL",
+    "value": 15
+  },
+  {
+    "iso3": "JPN",
+    "value": 28.52
+  },
+  {
+    "iso3": "KOR",
+    "value": 31.55
+  },
+  {
+    "iso3": "TWN",
+    "value": 23.94
+  },
+  {
+    "iso3": "ZAF",
+    "value": 29.18
+  },
+  {
+    "iso3": "NAM",
+    "value": 21.66
+  },
+  {
+    "iso3": "BWA",
+    "value": 33.05
+  },
+  {
+    "iso3": "GHA",
+    "value": 24.86
+  },
+  {
+    "iso3": "KEN",
+    "value": 34.81
+  },
+  {
+    "iso3": "TZA",
+    "value": 40.49
+  },
+  {
+    "iso3": "FJI",
+    "value": 35.45
+  },
+  {
+    "iso3": "PNG",
+    "value": 36.69
+  }
+]
