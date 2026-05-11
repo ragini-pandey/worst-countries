@@ -40,7 +40,7 @@ export function sortWorstFirst(
   const seen = new Map<string, MetricValue>();
   for (const v of values) if (!seen.has(v.iso3)) seen.set(v.iso3, v);
   const dir = metric.direction === "higher-worse" ? 1 : -1;
-  return [...seen.values()].sort((a, b) => dir * (b.value - a.value));
+  return Array.from(seen.values()).sort((a, b) => dir * (b.value - a.value));
 }
 
 export async function getRanking(metricId: string): Promise<{

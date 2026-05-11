@@ -1,7 +1,6 @@
 "use client";
 
 import { useMemo, useState, useRef, useEffect, useCallback } from "react";
-import Link from "next/link";
 import {
   ComposableMap,
   Geographies,
@@ -136,7 +135,7 @@ export function MetricExplorer({ metric, rows }: Props) {
           minZoom={MIN_ZOOM}
           maxZoom={MAX_ZOOM}
           onMoveEnd={(p: Position) => setPosition(p)}
-          filterZoomEvent={(evt: Event) => evt.type !== "wheel"}
+          filterZoomEvent={(evt: SVGElement | Event) => (evt as Event).type !== "wheel"}
         >
           <Geographies geography={TOPO_URL}>
             {({ geographies }: { geographies: Array<{ rsmKey: string; id: string; properties: { name: string; "Alpha-3"?: string } }> }) =>
