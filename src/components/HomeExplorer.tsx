@@ -145,7 +145,7 @@ export function HomeExplorer({ rankings, defaultMetricId }: Props) {
           )}
         </div>
 
-        <div className="flex flex-wrap items-center gap-2 text-xs">
+        <div className="flex flex-wrap items-center gap-2 overflow-x-auto text-xs sm:flex-nowrap">
           <span className="rounded-full border border-neutral-200 bg-white px-2.5 py-0.5 text-neutral-600 dark:border-neutral-800 dark:bg-neutral-900/60 dark:text-neutral-400">
             {active.metric.direction === "higher-worse"
               ? "↑ higher = worse"

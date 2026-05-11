@@ -162,6 +162,147 @@ export const METRICS: MetricDefinition[] = [
       cadence: "annual",
     },
   },
+  // ── Health ────────────────────────────────────────────────────────────────
+  {
+    id: "child-mortality",
+    title: "Child Mortality (Under-5)",
+    description:
+      "Under-5 mortality rate per 1,000 live births (World Bank / UNICEF). Higher = worse.",
+    unit: "per 1k births",
+    direction: "higher-worse",
+    category: "Health",
+    kind: "world-bank",
+    worldBankIndicator: "SH.DY5.IMR",
+    source: {
+      name: "World Bank — Mortality rate, under-5 (per 1,000 live births)",
+      url: "https://data.worldbank.org/indicator/SH.DY5.IMR",
+      lastUpdated: "live",
+      cadence: "annual",
+    },
+  },
+  {
+    id: "maternal-mortality",
+    title: "Maternal Mortality Ratio",
+    description:
+      "Maternal deaths per 100,000 live births. Higher = worse.",
+    unit: "per 100k births",
+    direction: "higher-worse",
+    category: "Health",
+    kind: "world-bank",
+    worldBankIndicator: "SH.STA.MMRT",
+    source: {
+      name: "World Bank — Maternal mortality ratio (per 100,000 live births)",
+      url: "https://data.worldbank.org/indicator/SH.STA.MMRT",
+      lastUpdated: "live",
+      cadence: "annual",
+    },
+  },
+  {
+    id: "life-expectancy",
+    title: "Low Life Expectancy",
+    description:
+      "Life expectancy at birth in years, inverted so the shortest-lived countries rank first.",
+    unit: "years",
+    direction: "lower-worse",
+    invertForRanking: true,
+    category: "Health",
+    kind: "world-bank",
+    worldBankIndicator: "SP.DYN.LE00.IN",
+    source: {
+      name: "World Bank — Life expectancy at birth, total (years)",
+      url: "https://data.worldbank.org/indicator/SP.DYN.LE00.IN",
+      lastUpdated: "live",
+      cadence: "annual",
+    },
+  },
+  // ── Economy (additional) ─────────────────────────────────────────────────
+  {
+    id: "poverty",
+    title: "Extreme Poverty Rate",
+    description:
+      "Share of population living on less than $2.15 per day (2017 PPP). Higher = worse.",
+    unit: "% of population",
+    direction: "higher-worse",
+    category: "Economy",
+    kind: "world-bank",
+    worldBankIndicator: "SI.POV.DDAY",
+    source: {
+      name: "World Bank — Poverty headcount ratio at $2.15/day (2017 PPP)",
+      url: "https://data.worldbank.org/indicator/SI.POV.DDAY",
+      lastUpdated: "live",
+      cadence: "annual",
+    },
+  },
+  {
+    id: "inflation",
+    title: "Inflation Rate",
+    description:
+      "Annual consumer price inflation (%). Very high inflation erodes living standards.",
+    unit: "%",
+    direction: "higher-worse",
+    category: "Economy",
+    kind: "world-bank",
+    worldBankIndicator: "FP.CPI.TOTL.ZG",
+    source: {
+      name: "World Bank — Inflation, consumer prices (annual %)",
+      url: "https://data.worldbank.org/indicator/FP.CPI.TOTL.ZG",
+      lastUpdated: "live",
+      cadence: "annual",
+    },
+  },
+  // ── Environment (additional) ─────────────────────────────────────────────
+  {
+    id: "air-pollution",
+    title: "Air Pollution (PM2.5)",
+    description:
+      "Mean annual exposure to fine particulate matter (PM2.5 μg/m³). Higher = worse air quality.",
+    unit: "μg/m³",
+    direction: "higher-worse",
+    category: "Environment",
+    kind: "world-bank",
+    worldBankIndicator: "EN.ATM.PM25.MC.M3",
+    source: {
+      name: "World Bank — PM2.5 air pollution, mean annual exposure (μg/m³)",
+      url: "https://data.worldbank.org/indicator/EN.ATM.PM25.MC.M3",
+      lastUpdated: "live",
+      cadence: "annual",
+    },
+  },
+  // ── Society (additional) ─────────────────────────────────────────────────
+  {
+    id: "inequality",
+    title: "Income Inequality (Gini)",
+    description:
+      "Gini coefficient: 0 = perfect equality, 100 = maximum inequality.",
+    unit: "Gini index",
+    direction: "higher-worse",
+    category: "Society",
+    kind: "world-bank",
+    worldBankIndicator: "SI.POV.GINI",
+    source: {
+      name: "World Bank — Gini index",
+      url: "https://data.worldbank.org/indicator/SI.POV.GINI",
+      lastUpdated: "live",
+      cadence: "annual",
+    },
+  },
+  {
+    id: "child-labor",
+    title: "Child Labour Rate",
+    description:
+      "Percentage of children ages 7–14 engaged in labour activities. Higher = worse.",
+    unit: "% of children",
+    direction: "higher-worse",
+    category: "Society",
+    kind: "world-bank",
+    worldBankIndicator: "SL.TLF.0714.ZS",
+    source: {
+      name: "World Bank — Child employment in agriculture (% of economically active children ages 7-14)",
+      url: "https://data.worldbank.org/indicator/SL.TLF.0714.ZS",
+      lastUpdated: "live",
+      cadence: "annual",
+    },
+  },
 ];
 
 export function getMetric(id: string): MetricDefinition | undefined {

@@ -23,7 +23,7 @@ export default function RootLayout({
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>
-      <body className="h-screen overflow-hidden bg-white text-neutral-900 antialiased flex flex-col dark:bg-neutral-950 dark:text-neutral-100">
+      <body className="flex h-screen flex-col overflow-hidden bg-white text-neutral-900 antialiased [height:100dvh] dark:bg-neutral-950 dark:text-neutral-100">
         <SiteHeader />
         <main className="flex-1 w-full overflow-y-auto">{children}</main>
       </body>

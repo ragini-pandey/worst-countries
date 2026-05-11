@@ -46,7 +46,8 @@ export interface MetricDefinition {
     | "Economy"
     | "Wellbeing"
     | "Environment"
-    | "Society";
+    | "Society"
+    | "Health";
   /** When true, raw values are inverted for ranking (e.g. happiness — lower is worse). */
   invertForRanking?: boolean;
 }

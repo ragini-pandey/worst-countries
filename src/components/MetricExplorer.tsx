@@ -43,12 +43,24 @@ export function MetricExplorer({ metric, rows }: Props) {
   const [hover, setHover] = useState<HoverState | null>(null);
   const [pinned, setPinned] = useState<string | null>(null);
   const [query, setQuery] = useState("");
+  const [mobileTab, setMobileTab] = useState<"map" | "list">("map");
   const [position, setPosition] = useState<Position>({
     coordinates: [10, 10],
     zoom: 1,
   });
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [mapScale, setMapScale] = useState(155);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  // Responsive projection scale — smaller on narrow screens so the full world fits
+  useEffect(() => {
+    function update() {
+      setMapScale(window.innerWidth < 768 ? 118 : 155);
+    }
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, []);
 
   const { color, byIso, range } = useMemo(() => {
     const map = new Map(rows.map((r) => [r.iso3, r] as const));
@@ -74,6 +86,8 @@ export function MetricExplorer({ metric, rows }: Props) {
   useEffect(() => {
     setHover(null);
     setPinned(null);
+    setQuery("");
+    setMobileTab("map");
     setPosition({ coordinates: [10, 10], zoom: 1 });
   }, [metric.id]);
 
@@ -117,178 +131,206 @@ export function MetricExplorer({ metric, rows }: Props) {
   }, []);
 
   return (
-    <div
-      ref={containerRef}
-      className={`relative w-full overflow-hidden bg-gradient-to-b from-slate-50 to-white dark:from-neutral-900/60 dark:to-neutral-950 ${
-        isFullscreen ? "h-screen" : "h-full min-h-[520px]"
-      }`}
-    >
-      <ComposableMap
-        projectionConfig={{ scale: 175 }}
-        width={1280}
-        height={620}
-        style={{ width: "100%", height: "100%" }}
+    <div className="flex h-full flex-col">
+      {/* Mobile tab bar */}
+      <div className="flex shrink-0 border-b border-neutral-200 bg-white dark:border-neutral-800 dark:bg-neutral-950 md:hidden">
+        <button
+          type="button"
+          onClick={() => setMobileTab("map")}
+          className={`flex-1 py-2.5 text-sm font-medium transition-colors ${
+            mobileTab === "map"
+              ? "border-b-2 border-neutral-900 text-neutral-900 dark:border-white dark:text-white"
+              : "text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200"
+          }`}
+        >
+          Map
+        </button>
+        <button
+          type="button"
+          onClick={() => setMobileTab("list")}
+          className={`flex-1 py-2.5 text-sm font-medium transition-colors ${
+            mobileTab === "list"
+              ? "border-b-2 border-neutral-900 text-neutral-900 dark:border-white dark:text-white"
+              : "text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200"
+          }`}
+        >
+          Rankings
+        </button>
+      </div>
+
+      {/* Map panel */}
+      <div
+        ref={containerRef}
+        className={`relative w-full overflow-hidden bg-gradient-to-b from-slate-50 to-white dark:from-neutral-900/60 dark:to-neutral-950 ${
+          isFullscreen ? "h-screen" : "flex-1 min-h-0 md:min-h-[520px]"
+        } ${mobileTab === "list" ? "hidden md:block" : "block"}`}
       >
-        <ZoomableGroup
-          center={position.coordinates}
-          zoom={position.zoom}
-          minZoom={MIN_ZOOM}
-          maxZoom={MAX_ZOOM}
-          onMoveEnd={(p: Position) => setPosition(p)}
-          filterZoomEvent={(evt: SVGElement | Event) => (evt as Event).type !== "wheel"}
+        <ComposableMap
+          projectionConfig={{ scale: mapScale }}
+          width={1280}
+          height={620}
+          style={{ width: "100%", height: "100%" }}
         >
-          <Geographies geography={TOPO_URL}>
-            {({ geographies }: { geographies: Array<{ rsmKey: string; id: string; properties: { name: string; "Alpha-3"?: string } }> }) =>
-              geographies.map((geo) => {
-                const iso3 =
-                  geo.properties["Alpha-3"] || NUMERIC_TO_ISO3[geo.id];
-                const row = iso3 ? byIso.get(iso3) : undefined;
-                const fill = row ? color(row.value) : "var(--map-empty)";
-                const isActive = iso3 ? iso3 === activeIso : false;
-                return (
-                  <Geography
-                    key={geo.rsmKey}
-                    geography={geo}
-                    fill={fill}
-                    stroke={isActive ? "#111827" : "var(--map-stroke)"}
-                    strokeWidth={isActive ? 1.2 : 0.4}
-                    onMouseEnter={(e: React.MouseEvent<SVGPathElement>) => {
-                      const rect =
-                        containerRef.current?.getBoundingClientRect();
-                      setHover({
-                        row: row ?? null,
-                        name: geo.properties.name,
-                        x: e.clientX - (rect?.left ?? 0),
-                        y: e.clientY - (rect?.top ?? 0),
-                      });
-                    }}
-                    onMouseMove={(e: React.MouseEvent<SVGPathElement>) => {
-                      const rect =
-                        containerRef.current?.getBoundingClientRect();
-                      setHover((prev) =>
-                        prev
-                          ? {
-                              ...prev,
-                              x: e.clientX - (rect?.left ?? 0),
-                              y: e.clientY - (rect?.top ?? 0),
-                            }
-                          : prev
-                      );
-                    }}
-                    onMouseLeave={() => setHover(null)}
-                    onClick={() => {
-                      if (iso3) setPinned(iso3 === pinned ? null : iso3);
-                    }}
-                    style={{
-                      default: { outline: "none", cursor: row ? "pointer" : "default" },
-                      hover: { outline: "none", filter: "brightness(1.08)" },
-                      pressed: { outline: "none" },
-                    }}
-                  />
-                );
-              })
-            }
-          </Geographies>
-        </ZoomableGroup>
-      </ComposableMap>
+          <ZoomableGroup
+            center={position.coordinates}
+            zoom={position.zoom}
+            minZoom={MIN_ZOOM}
+            maxZoom={MAX_ZOOM}
+            onMoveEnd={(p: Position) => setPosition(p)}
+            filterZoomEvent={(evt: SVGElement | Event) => (evt as Event).type !== "wheel"}
+          >
+            <Geographies geography={TOPO_URL}>
+              {({ geographies }: { geographies: Array<{ rsmKey: string; id: string; properties: { name: string; "Alpha-3"?: string } }> }) =>
+                geographies.map((geo) => {
+                  const iso3 =
+                    geo.properties["Alpha-3"] || NUMERIC_TO_ISO3[geo.id];
+                  const row = iso3 ? byIso.get(iso3) : undefined;
+                  const fill = row ? color(row.value) : "var(--map-empty)";
+                  const isActive = iso3 ? iso3 === activeIso : false;
+                  return (
+                    <Geography
+                      key={geo.rsmKey}
+                      geography={geo}
+                      fill={fill}
+                      stroke={isActive ? "#111827" : "var(--map-stroke)"}
+                      strokeWidth={isActive ? 1.2 : 0.4}
+                      onMouseEnter={(e: React.MouseEvent<SVGPathElement>) => {
+                        const rect =
+                          containerRef.current?.getBoundingClientRect();
+                        setHover({
+                          row: row ?? null,
+                          name: geo.properties.name,
+                          x: e.clientX - (rect?.left ?? 0),
+                          y: e.clientY - (rect?.top ?? 0),
+                        });
+                      }}
+                      onMouseMove={(e: React.MouseEvent<SVGPathElement>) => {
+                        const rect =
+                          containerRef.current?.getBoundingClientRect();
+                        setHover((prev) =>
+                          prev
+                            ? {
+                                ...prev,
+                                x: e.clientX - (rect?.left ?? 0),
+                                y: e.clientY - (rect?.top ?? 0),
+                              }
+                            : prev
+                        );
+                      }}
+                      onMouseLeave={() => setHover(null)}
+                      onClick={() => {
+                        if (iso3) setPinned(iso3 === pinned ? null : iso3);
+                      }}
+                      style={{
+                        default: { outline: "none", cursor: row ? "pointer" : "default" },
+                        hover: { outline: "none", filter: "brightness(1.08)" },
+                        pressed: { outline: "none" },
+                      }}
+                    />
+                  );
+                })
+              }
+            </Geographies>
+          </ZoomableGroup>
+        </ComposableMap>
 
-      {/* Cursor-following tooltip on hover */}
-      {hover && (
-        <div
-          className="pointer-events-none absolute z-30 translate-x-3 translate-y-3 min-w-[200px] max-w-[260px] rounded-lg border border-neutral-300 bg-white/95 px-3 py-2 shadow-xl backdrop-blur dark:border-neutral-700 dark:bg-neutral-950/95"
-          style={{ left: hover.x, top: hover.y }}
-        >
-          {hover.row ? (
-            <DetailCardContent metric={metric} row={hover.row} total={rows.length} />
-          ) : (
-            <div>
-              <div className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
-                {hover.name}
+        {/* Cursor-following tooltip on hover */}
+        {hover && (
+          <div
+            className="pointer-events-none absolute z-30 translate-x-3 translate-y-3 min-w-[200px] max-w-[260px] rounded-lg border border-neutral-300 bg-white/95 px-3 py-2 shadow-xl backdrop-blur dark:border-neutral-700 dark:bg-neutral-950/95"
+            style={{ left: hover.x, top: hover.y }}
+          >
+            {hover.row ? (
+              <DetailCardContent metric={metric} row={hover.row} total={rows.length} />
+            ) : (
+              <div>
+                <div className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
+                  {hover.name}
+                </div>
+                <div className="text-xs text-neutral-500 mt-0.5">No data</div>
               </div>
-              <div className="text-xs text-neutral-500 mt-0.5">No data</div>
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* Top-left panel: pinned country, or podium by default */}
-      <div className="absolute top-3 left-3 z-20 w-[280px] max-w-[calc(100%-1.5rem)] rounded-lg border border-neutral-300 bg-white/95 p-3 shadow-xl backdrop-blur dark:border-neutral-700 dark:bg-neutral-950/95">
-        {pinned && activeRow ? (
-          <div className="relative">
-            <DetailCardContent metric={metric} row={activeRow} total={rows.length} />
-            <button
-              onClick={() => setPinned(null)}
-              className="absolute -top-1 -right-1 text-neutral-400 hover:text-neutral-700 dark:text-neutral-500 dark:hover:text-neutral-200"
-              aria-label="Dismiss"
-            >
-              ×
-            </button>
+            )}
           </div>
-        ) : (
-          <Podium rows={rows} color={color} />
         )}
-      </div>
 
-      {/* Legend (bottom-left) */}
-      <div className="pointer-events-none absolute bottom-3 left-3 z-10 rounded-lg border border-neutral-300 bg-white/90 px-2.5 py-1.5 text-[11px] shadow-sm backdrop-blur dark:border-neutral-700 dark:bg-neutral-950/85">
-        <div
-          className="h-1.5 w-44 rounded"
-          style={{
-            background:
-              "linear-gradient(to right, #d73027, #fdae61, #fee08b, #d9ef8b, #1a9850)",
-          }}
-        />
-        <div className="mt-1 flex justify-between tabular-nums text-neutral-600 dark:text-neutral-400">
-          <span>
-            <span className="text-red-600 dark:text-red-400">Worse</span> · {formatValue(worstVal, "")}
-          </span>
-          <span>
-            <span className="text-emerald-600 dark:text-emerald-400">Better</span> · {formatValue(bestVal, "")}
-          </span>
-        </div>
-      </div>
-
-      {/* Zoom + fullscreen controls (left, vertical) */}
-      <div className="absolute left-3 top-1/2 z-10 flex -translate-y-1/2 flex-col gap-2">
-        <ControlButton
-          label="Zoom in"
-          onClick={() => zoomBy(1.5)}
-          disabled={position.zoom >= MAX_ZOOM}
-        >
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden>
-            <path d="M12 5v14M5 12h14" />
-          </svg>
-        </ControlButton>
-        <ControlButton
-          label="Zoom out"
-          onClick={() => zoomBy(1 / 1.5)}
-          disabled={position.zoom <= MIN_ZOOM}
-        >
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden>
-            <path d="M5 12h14" />
-          </svg>
-        </ControlButton>
-        <ControlButton label="Reset view" onClick={resetView}>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-            <path d="M3 12a9 9 0 1 0 3-6.7" />
-            <path d="M3 4v5h5" />
-          </svg>
-        </ControlButton>
-        <ControlButton label={isFullscreen ? "Exit fullscreen" : "Fullscreen"} onClick={toggleFullscreen}>
-          {isFullscreen ? (
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-              <path d="M8 3v5H3M16 3v5h5M8 21v-5H3M16 21v-5h5" />
-            </svg>
+        {/* Top-left panel: pinned country, or podium — desktop only */}
+        <div className="hidden md:block absolute top-3 left-3 z-20 w-[280px] max-w-[calc(100%-1.5rem)] rounded-lg border border-neutral-300 bg-white/95 p-3 shadow-xl backdrop-blur dark:border-neutral-700 dark:bg-neutral-950/95">
+          {pinned && activeRow ? (
+            <div className="relative">
+              <DetailCardContent metric={metric} row={activeRow} total={rows.length} />
+              <button
+                onClick={() => setPinned(null)}
+                className="absolute -top-1 -right-1 text-neutral-400 hover:text-neutral-700 dark:text-neutral-500 dark:hover:text-neutral-200"
+                aria-label="Dismiss"
+              >
+                ×
+              </button>
+            </div>
           ) : (
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-              <path d="M3 9V3h6M21 9V3h-6M3 15v6h6M21 15v6h-6" />
-            </svg>
+            <Podium rows={rows} color={color} />
           )}
-        </ControlButton>
-      </div>
+        </div>
 
-      {/* Country list — overlaid on the right, inside the map (worst on top) */}
-      <aside className="absolute top-3 right-3 bottom-3 z-10 flex w-[300px] max-w-[40vw] flex-col overflow-hidden rounded-xl border border-neutral-300 bg-white/95 shadow-xl backdrop-blur dark:border-neutral-700 dark:bg-neutral-950/90">
+        {/* Legend (bottom-left) */}
+        <div className="pointer-events-none absolute bottom-3 left-3 z-10 rounded-lg border border-neutral-300 bg-white/90 px-2.5 py-1.5 text-[11px] shadow-sm backdrop-blur dark:border-neutral-700 dark:bg-neutral-950/85">
+          <div
+            className="h-1.5 w-28 rounded sm:w-44"
+            style={{
+              background:
+                "linear-gradient(to right, #d73027, #fdae61, #fee08b, #d9ef8b, #1a9850)",
+            }}
+          />
+          <div className="mt-1 flex justify-between tabular-nums text-neutral-600 dark:text-neutral-400">
+            <span>
+              <span className="text-red-600 dark:text-red-400">Worse</span> · {formatValue(worstVal, "")}
+            </span>
+            <span>
+              <span className="text-emerald-600 dark:text-emerald-400">Better</span> · {formatValue(bestVal, "")}
+            </span>
+          </div>
+        </div>
+
+        {/* Zoom + fullscreen controls (right side on mobile, left on desktop) */}
+        <div className="absolute right-3 top-3 z-10 flex flex-col gap-1.5 md:left-3 md:right-auto md:top-1/2 md:-translate-y-1/2 md:gap-2">
+          <ControlButton
+            label="Zoom in"
+            onClick={() => zoomBy(1.5)}
+            disabled={position.zoom >= MAX_ZOOM}
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden>
+              <path d="M12 5v14M5 12h14" />
+            </svg>
+          </ControlButton>
+          <ControlButton
+            label="Zoom out"
+            onClick={() => zoomBy(1 / 1.5)}
+            disabled={position.zoom <= MIN_ZOOM}
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden>
+              <path d="M5 12h14" />
+            </svg>
+          </ControlButton>
+          <ControlButton label="Reset view" onClick={resetView}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+              <path d="M3 12a9 9 0 1 0 3-6.7" />
+              <path d="M3 4v5h5" />
+            </svg>
+          </ControlButton>
+          <ControlButton label={isFullscreen ? "Exit fullscreen" : "Fullscreen"} onClick={toggleFullscreen}>
+            {isFullscreen ? (
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                <path d="M8 3v5H3M16 3v5h5M8 21v-5H3M16 21v-5h5" />
+              </svg>
+            ) : (
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                <path d="M3 9V3h6M21 9V3h-6M3 15v6h6M21 15v6h-6" />
+              </svg>
+            )}
+          </ControlButton>
+        </div>
+
+        {/* Country list — desktop only, overlaid on the right */}
+        <aside className="absolute top-3 right-3 bottom-3 z-10 hidden w-[300px] max-w-[40vw] flex-col overflow-hidden rounded-xl border border-neutral-300 bg-white/95 shadow-xl backdrop-blur md:flex dark:border-neutral-700 dark:bg-neutral-950/90">
           <div className="flex items-center gap-2 border-b border-neutral-200 px-3 py-2 dark:border-neutral-800">
             <input
               type="search"
@@ -312,26 +354,17 @@ export function MetricExplorer({ metric, rows }: Props) {
                 <li key={r.iso3}>
                   <button
                     type="button"
-                    onClick={() =>
-                      setPinned(pinned === r.iso3 ? null : r.iso3)
-                    }
+                    onClick={() => setPinned(pinned === r.iso3 ? null : r.iso3)}
                     className={`flex w-full items-center gap-3 px-3 py-2 text-left text-sm transition-colors ${
                       isActive
                         ? "bg-neutral-100 text-neutral-900 dark:bg-neutral-800/80 dark:text-white"
                         : "text-neutral-700 hover:bg-neutral-50 dark:text-neutral-300 dark:hover:bg-neutral-900"
                     }`}
                   >
-                    <span
-                      aria-hidden
-                      className="w-6 text-right tabular-nums text-xs text-neutral-400 dark:text-neutral-500"
-                    >
+                    <span aria-hidden className="w-6 text-right tabular-nums text-xs text-neutral-400 dark:text-neutral-500">
                       {r.rank}
                     </span>
-                    <span
-                      aria-hidden
-                      className="h-3 w-3 rounded-sm shrink-0 ring-1 ring-black/10 dark:ring-black/40"
-                      style={{ backgroundColor: color(r.value) }}
-                    />
+                    <span aria-hidden className="h-3 w-3 rounded-sm shrink-0 ring-1 ring-black/10 dark:ring-black/40" style={{ backgroundColor: color(r.value) }} />
                     <span className="truncate flex-1">
                       <span className="mr-1.5">{r.country.flag}</span>
                       {r.country.name}
@@ -344,16 +377,88 @@ export function MetricExplorer({ metric, rows }: Props) {
               );
             })}
             {filteredRows.length === 0 && (
-              <li className="px-3 py-6 text-center text-xs text-neutral-500">
-                No matches.
-              </li>
+              <li className="px-3 py-6 text-center text-xs text-neutral-500">No matches.</li>
             )}
           </ol>
         </aside>
 
-      <p className="pointer-events-none absolute bottom-2 left-1/2 z-10 -translate-x-1/2 text-[10px] text-neutral-500">
-        Drag to pan · use the buttons to zoom · click a country to pin
-      </p>
+        <p className="pointer-events-none absolute bottom-2 left-1/2 z-10 hidden -translate-x-1/2 text-[10px] text-neutral-500 md:block">
+          Drag to pan · use the buttons to zoom · click a country to pin
+        </p>
+      </div>
+
+      {/* Mobile list panel (shown when Rankings tab is active) */}
+      <div className={`flex flex-col overflow-hidden md:hidden ${mobileTab === "map" ? "hidden" : "flex-1 min-h-0"}`}>
+        {/* Pinned country detail or podium */}
+        <div className="shrink-0 border-b border-neutral-200 bg-white p-3 dark:border-neutral-800 dark:bg-neutral-950">
+          {pinned && activeRow ? (
+            <div className="relative">
+              <DetailCardContent metric={metric} row={activeRow} total={rows.length} />
+              <button
+                onClick={() => setPinned(null)}
+                className="absolute -top-1 -right-1 text-neutral-400 hover:text-neutral-700 dark:text-neutral-500 dark:hover:text-neutral-200"
+                aria-label="Dismiss"
+              >
+                ×
+              </button>
+            </div>
+          ) : (
+            <Podium rows={rows} color={color} />
+          )}
+        </div>
+        {/* Search */}
+        <div className="flex shrink-0 items-center gap-2 border-b border-neutral-200 px-3 py-2.5 dark:border-neutral-800">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 text-neutral-400" aria-hidden>
+            <circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" />
+          </svg>
+          <input
+            type="search"
+            aria-label="Search country"
+            placeholder="Search country…"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            className="flex-1 bg-transparent text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none dark:text-neutral-100 dark:placeholder:text-neutral-500"
+          />
+          <span className="text-[10px] uppercase tracking-wider text-neutral-500">{filteredRows.length}</span>
+        </div>
+        {/* Country list */}
+        <ol className="flex-1 divide-y divide-neutral-100 overflow-y-auto dark:divide-neutral-900" role="list">
+          {filteredRows.map((r) => {
+            const isActive = pinned === r.iso3;
+            return (
+              <li key={r.iso3}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setPinned(pinned === r.iso3 ? null : r.iso3);
+                    setMobileTab("map");
+                  }}
+                  className={`flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm transition-colors ${
+                    isActive
+                      ? "bg-neutral-100 text-neutral-900 dark:bg-neutral-800/80 dark:text-white"
+                      : "text-neutral-700 hover:bg-neutral-50 dark:text-neutral-300 dark:hover:bg-neutral-900"
+                  }`}
+                >
+                  <span aria-hidden className="w-6 text-right tabular-nums text-xs text-neutral-400 dark:text-neutral-500">
+                    {r.rank}
+                  </span>
+                  <span aria-hidden className="h-3 w-3 rounded-sm shrink-0 ring-1 ring-black/10 dark:ring-black/40" style={{ backgroundColor: color(r.value) }} />
+                  <span className="truncate flex-1">
+                    <span className="mr-1.5">{r.country.flag}</span>
+                    {r.country.name}
+                  </span>
+                  <span className="tabular-nums text-xs text-neutral-500 dark:text-neutral-400">
+                    {formatValue(r.value, "")}
+                  </span>
+                </button>
+              </li>
+            );
+          })}
+          {filteredRows.length === 0 && (
+            <li className="px-3 py-6 text-center text-xs text-neutral-500">No matches.</li>
+          )}
+        </ol>
+      </div>
     </div>
   );
 }
@@ -376,7 +481,7 @@ function ControlButton({
       disabled={disabled}
       aria-label={label}
       title={label}
-      className="inline-flex h-11 w-11 items-center justify-center rounded-lg border-2 border-neutral-300 bg-white text-neutral-800 shadow-md transition hover:border-neutral-500 hover:bg-neutral-50 hover:text-neutral-900 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-neutral-300 disabled:hover:bg-white dark:border-neutral-600 dark:bg-neutral-900 dark:text-neutral-200 dark:hover:border-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-white"
+      className="inline-flex h-8 w-8 items-center justify-center rounded-lg border-2 border-neutral-300 bg-white text-neutral-800 shadow-md transition hover:border-neutral-500 hover:bg-neutral-50 hover:text-neutral-900 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-neutral-300 disabled:hover:bg-white md:h-11 md:w-11 dark:border-neutral-600 dark:bg-neutral-900 dark:text-neutral-200 dark:hover:border-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-white"
     >
       {children}
     </button>
@@ -484,7 +589,7 @@ function Podium({
         )}
       </div>
       <p className="mt-2 text-[10px] text-neutral-500">
-        Hover a country for details · click to pin
+        Tap or click a country for details
       </p>
     </div>
   );
